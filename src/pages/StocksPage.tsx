@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
 import BasicAreaChart from "../charts/BasicAreaChart"
-import type { DataPoint, ResponsePoint } from "../lib/interfaces"
+import type { AreaData, Time } from "lightweight-charts"
 
 function StocksPage() {
 
-  const [chartData, setChartData] = useState<DataPoint[]>([])
+  const [chartData, setChartData] = useState<AreaData<Time>[]>([])
 
   useEffect(() => {
     const fetchDataFunc = async () => {
@@ -22,15 +22,11 @@ function StocksPage() {
       })
     })
 
-    const data = (await response.json()) as ResponsePoint[] 
-    const dataPoints: DataPoint[] = data.map((d) => ({
-      time: new Date(d.time),
-      value: d.value
-    }))
+    const data = (await response.json()) as AreaData<Time>[] 
 
-    console.log(dataPoints[0])
+    console.log(data[0])
 
-    setChartData(dataPoints)
+    setChartData(data)
   }
 
   return (

@@ -1,9 +1,6 @@
-export interface DataPoint {
-  time: Date
-  value: number
-}
+import type { Time } from "lightweight-charts"
 
-export interface ResponsePoint {
-  time: string
+export interface DataPoint {
+  time: Time
   value: number
 }
