@@ -1,12 +1,12 @@
 import { Route, Routes } from "react-router-dom"
-import StocksPage from "./pages/StocksPage"
+import ChartPage from "./pages/ChartPage"
 
 function App() {
 
   return (
     <>
       <Routes>
-        <Route path="/stocks" element={<StocksPage />}  />
+        <Route path="/stocks" element={<ChartPage />}  />
       </Routes>
     </>
   )
