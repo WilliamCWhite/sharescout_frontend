@@ -1,13 +1,13 @@
 import { useEffect, useRef } from "react";
 import { createChart, AreaSeries } from "lightweight-charts";
 import type { AreaData, Time  } from "lightweight-charts";
-import { convertResponsePoints } from "../lib/dataConversions";
+import { convertResponsePoints, DataDisplaySetting } from "../lib/dataConversions";
 import type { ResponsePoint } from "../lib/interfaces";
 
 interface BasicAreaChartProps {
-  responsePoints: ResponsePoint[];
-  field: string;
-  field2: string;
+  responsePoints: ResponsePoint[] | null;
+  field: DataDisplaySetting;
+  field2: DataDisplaySetting;
 }
 
 function BasicAreaChart(props: BasicAreaChartProps) {
@@ -15,6 +15,7 @@ function BasicAreaChart(props: BasicAreaChartProps) {
 
   useEffect(() => {
     if (!chartContainerRef.current) return;
+    if (props.responsePoints === null) return;
     if (props.responsePoints.length <= 0)  return;
 
     const chart = createChart(chartContainerRef.current, {

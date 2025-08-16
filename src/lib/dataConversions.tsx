@@ -1,25 +1,34 @@
 import type { AreaData, Time, UTCTimestamp } from "lightweight-charts";
 import type { ResponsePoint } from "./interfaces";
 
+export const DataDisplaySetting = {
+  Price: "Price",
+  PercentGrowth: "PercentGrowth",
+  ThousandIn: "ThousandIn",
+  PercentReturns: "PercentReturns",
+} as const;
 
-export function convertResponsePoints(data: ResponsePoint[], field: string): AreaData<Time>[] {
+export type DataDisplaySetting =
+  (typeof DataDisplaySetting)[keyof typeof DataDisplaySetting];
+
+export function convertResponsePoints(data: ResponsePoint[], field: DataDisplaySetting): AreaData<Time>[] {
   switch (field) {
-    case "price":
+    case DataDisplaySetting.Price:
       return data.map((d) => ({
         time: d.timestamp as UTCTimestamp,
         value: d.price
       }))
-    case "percentGrowth":
+    case DataDisplaySetting.PercentGrowth:
       return data.map((d) => ({
         time: d.timestamp as UTCTimestamp,
         value: d.percentGrowth
       }))
-    case "thousandIn":
+    case DataDisplaySetting.ThousandIn:
       return data.map((d) => ({
         time: d.timestamp as UTCTimestamp,
         value: d.thousandIn
       }))
-    case "percentReturns":
+    case DataDisplaySetting.PercentReturns:
       return data.map((d) => ({
         time: d.timestamp as UTCTimestamp,
         value: d.percentReturns
