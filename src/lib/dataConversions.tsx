@@ -1,15 +1,6 @@
 import type { AreaData, Time, UTCTimestamp } from "lightweight-charts";
 import type { ResponsePoint } from "./interfaces";
-
-export const DataDisplaySetting = {
-  Price: "Price",
-  PercentGrowth: "PercentGrowth",
-  ThousandIn: "ThousandIn",
-  PercentReturns: "PercentReturns",
-} as const;
-
-export type DataDisplaySetting =
-  (typeof DataDisplaySetting)[keyof typeof DataDisplaySetting];
+import { DataDisplaySetting } from "./interfaces";
 
 export function convertResponsePoints(data: ResponsePoint[], field: DataDisplaySetting): AreaData<Time>[] {
   switch (field) {

@@ -1,8 +1,9 @@
 import { useEffect, useRef } from "react";
 import { createChart, AreaSeries } from "lightweight-charts";
 import type { AreaData, Time  } from "lightweight-charts";
-import { convertResponsePoints, DataDisplaySetting } from "../lib/dataConversions";
+import { convertResponsePoints } from "../lib/dataConversions";
 import type { ResponsePoint } from "../lib/interfaces";
+import { DataDisplaySetting } from "../lib/interfaces";
 
 interface BasicAreaChartProps {
   responsePoints: ResponsePoint[] | null;

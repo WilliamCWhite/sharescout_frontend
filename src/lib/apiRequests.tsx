@@ -1,11 +1,11 @@
-import type { ResponsePoint } from "./interfaces"
+import type { DateRange, ResponsePoint } from "./interfaces"
 
-export async function getResponsePoints(ticker: string, startDate: Date, endDate: Date): Promise<ResponsePoint[]> {
+export async function getResponsePoints(ticker: string, dateRange: DateRange): Promise<ResponsePoint[]> {
   const response = await fetch(`http://localhost:6060/api/stock/${ticker}`, {
     method: "POST",
     body: JSON.stringify({
-      "start_date": startDate.toISOString(),
-      "end_date": endDate.toISOString()
+      "start_date": dateRange.startDate.toISOString(),
+      "end_date": dateRange.endDate.toISOString()
     })
   })
 
