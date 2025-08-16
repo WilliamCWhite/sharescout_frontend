@@ -1,6 +1,6 @@
 import { RangeSetting, type DateRange } from "./interfaces";
  
-export function generateRange(rangeSetting: RangeSetting): DateRange {
+export function generateSetRange(rangeSetting: RangeSetting): DateRange {
   const now = new Date()
   const then = new Date()
   then.setUTCHours(13, 30, 0, 0) // When stock market opens
@@ -44,4 +44,60 @@ export function generateRange(rangeSetting: RangeSetting): DateRange {
   }
 
   return {startDate: then, endDate: now}
+}
+
+export function getInitialCustomStart(): string {
+  const then = new Date()
+  then.setDate(then.getDate() - 18)
+
+  return then.toISOString().split("T")[0]
+}
+
+export function getInitialCustomEnd(): string {
+  const then = new Date()
+
+  return then.toISOString().split("T")[0]
+}
+
+export function generateCustomRange(startString: string, endString: string): DateRange {
+  let [year, month, day] = startString.split("-").map(Number);
+  const startDate = new Date(year, month - 1, day);
+  startDate.setUTCHours(13, 30, 0, 0);
+  
+  [year, month, day] = endString.split("-").map(Number);
+  const endDate = new Date(year, month - 1, day);
+  endDate.setUTCHours(20, 0, 0, 0);
+
+  return {startDate: startDate, endDate: endDate}
+}
+
+export function isStartValid(startString: string, endString: string): boolean {
+  const range = generateCustomRange(startString, endString)
+  if (range.startDate.getTime() > range.endDate.getTime()) {
+    return false
+  }
+  
+  const now = new Date()
+
+  if (range.startDate.getTime() > now.getTime()) {
+    return false
+  }
+
+  return true
+}
+
+export function isEndValid(startString: string, endString: string): boolean {
+  const range = generateCustomRange(startString, endString)
+  if (range.endDate.getTime() < range.startDate.getTime()) {
+    return false
+  }
+  
+  const endOfToday = new Date()
+  endOfToday.setUTCHours(21, 0, 0, 0)
+
+  if (range.endDate.getTime() > endOfToday.getTime()) {
+    return false
+  }
+
+  return true
 }
