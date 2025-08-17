@@ -44,3 +44,10 @@ export interface DateRange {
   startDate: Date,
   endDate: Date
 }
+
+export interface SearchQuote {
+  symbol: string,
+  shortname: string,
+  typeDisp: string,
+  sectorDisp: string
+}

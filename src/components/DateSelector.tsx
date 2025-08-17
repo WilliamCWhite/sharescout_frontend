@@ -9,6 +9,8 @@ interface DateSelectorProps {
 function DateSelector(props: DateSelectorProps) {
   const [rangeSetting, setRangeSetting] = useState<RangeSetting>(RangeSetting.OneMonth)
 
+  // TODO: Since some resolutions will be too low, create error screen or just
+  // enforce a week long gap and a month long gap for valid dates
   const [customStartDate, setCustomStartDate] = useState<string>(getInitialCustomStart())
   const [customEndDate, setCustomEndDate] = useState<string>(getInitialCustomEnd())
 
@@ -42,7 +44,6 @@ function DateSelector(props: DateSelectorProps) {
 
   function handleCustomClick() {
     setRangeSetting(RangeSetting.Custom)
-
   }
 
   return (

@@ -1,49 +1,58 @@
 import { RangeSetting, type DateRange } from "./interfaces";
  
 export function generateSetRange(rangeSetting: RangeSetting): DateRange {
-  const now = new Date()
-  const then = new Date()
-  then.setUTCHours(13, 30, 0, 0) // When stock market opens
+  const end = new Date()
 
-  // if its before when the market opens in the day, set then to the start of the day before
-  if (now.getTime() < then.getTime()) {
-    then.setDate(then.getDate() - 1)
+  if (end.getUTCDay() === 0) { // push sun to friday
+    end.setUTCDate(end.getUTCDate() - 2)
+  } else if (end.getUTCDay() === 6) { // push sat to friday
+    end.setUTCDate(end.getUTCDate() - 1)
   }
+
+  const start = new Date(end.getTime())
+  end.setDate(end.getDate() + 1)
+  end.setUTCHours(0, 0, 0, 0)
+  start.setUTCHours(0, 0, 0, 0)
 
   switch (rangeSetting) {
     case RangeSetting.OneDay:
       break;
     case RangeSetting.FiveDay:
       // since all of these are based on now, don't have to worry about anything with then.
-      then.setDate(now.getDate() - 7)
+      start.setDate(end.getDate() - 6)
       break;
     case RangeSetting.OneMonth:
-      then.setMonth(now.getMonth() - 1)
+      start.setDate(end.getDate() + 1)
+      start.setMonth(end.getMonth() - 1)
       break;
     case RangeSetting.ThreeMonth:
-      then.setMonth(now.getMonth() - 3)
+      start.setDate(end.getDate() + 1)
+      start.setMonth(end.getMonth() - 3)
       break;
     case RangeSetting.SixMonth:
-      then.setMonth(now.getMonth() - 6)
+      start.setDate(end.getDate() + 1)
+      start.setMonth(end.getMonth() - 6)
       break;
     case RangeSetting.YTD:
-      then.setMonth(0)
-      then.setDate(1)
+      start.setMonth(0)
+      start.setDate(1)
       break;
     case RangeSetting.OneYear:
-      then.setFullYear(now.getFullYear() - 1)
+      start.setDate(end.getDate() + 1)
+      start.setFullYear(end.getFullYear() - 1)
       break;
     case RangeSetting.TwoYear:
-      then.setFullYear(now.getFullYear() - 2)
+      start.setDate(end.getDate() + 1)
+      start.setFullYear(end.getFullYear() - 2)
       break;
     case RangeSetting.FiveYear:
-      then.setFullYear(now.getFullYear() - 5)
+      start.setDate(end.getDate() + 1)
+      start.setFullYear(end.getFullYear() - 5)
       break;
     default:
-      then.setDate(now.getDate() - 1)
   }
 
-  return {startDate: then, endDate: now}
+  return {startDate: start, endDate: end}
 }
 
 export function getInitialCustomStart(): string {
