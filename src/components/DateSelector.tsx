@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 
 interface DateSelectorProps {
   setActiveRange: any;
+  rangeSetting: RangeSetting;
+  setRangeSetting: any;
 }
 
 function DateSelector(props: DateSelectorProps) {
-  const [rangeSetting, setRangeSetting] = useState<RangeSetting>(RangeSetting.OneMonth)
 
   // TODO: Since some resolutions will be too low, create error screen or just
   // enforce a week long gap and a month long gap for valid dates
@@ -16,16 +17,16 @@ function DateSelector(props: DateSelectorProps) {
 
   // Change active range when range setting changes
   useEffect(() => {
-    if (rangeSetting === RangeSetting.Custom) {
+    if (props.rangeSetting === RangeSetting.Custom) {
       props.setActiveRange(generateCustomRange(customStartDate, customEndDate))
       return
     }
-    props.setActiveRange(generateSetRange(rangeSetting))
-  }, [rangeSetting])
+    props.setActiveRange(generateSetRange(props.rangeSetting))
+  }, [props.rangeSetting])
 
   // If custom is selected, change active range when the bounds change
   useEffect(() => {
-    if (rangeSetting === RangeSetting.Custom) {
+    if (props.rangeSetting === RangeSetting.Custom) {
       props.setActiveRange(generateCustomRange(customStartDate, customEndDate))
     }
   }, [customStartDate, customEndDate])
@@ -43,21 +44,21 @@ function DateSelector(props: DateSelectorProps) {
   };
 
   function handleCustomClick() {
-    setRangeSetting(RangeSetting.Custom)
+    props.setRangeSetting(RangeSetting.Custom)
   }
 
   return (
     <div className="flex justify-between">
       <section className="flex">
-        <button onClick={() => {setRangeSetting(RangeSetting.OneDay)}}>1d</button>
-        <button onClick={() => {setRangeSetting(RangeSetting.FiveDay)}}>5d</button>
-        <button onClick={() => {setRangeSetting(RangeSetting.OneMonth)}}>1m</button>
-        <button onClick={() => {setRangeSetting(RangeSetting.ThreeMonth)}}>3m</button>
-        <button onClick={() => {setRangeSetting(RangeSetting.SixMonth)}}>6m</button>
-        <button onClick={() => {setRangeSetting(RangeSetting.YTD)}}>YTD</button>
-        <button onClick={() => {setRangeSetting(RangeSetting.OneYear)}}>1y</button>
-        <button onClick={() => {setRangeSetting(RangeSetting.TwoYear)}}>2y</button>
-        <button onClick={() => {setRangeSetting(RangeSetting.FiveYear)}}>5y</button>
+        <button onClick={() => {props.setRangeSetting(RangeSetting.OneDay)}}>1d</button>
+        <button onClick={() => {props.setRangeSetting(RangeSetting.FiveDay)}}>5d</button>
+        <button onClick={() => {props.setRangeSetting(RangeSetting.OneMonth)}}>1m</button>
+        <button onClick={() => {props.setRangeSetting(RangeSetting.ThreeMonth)}}>3m</button>
+        <button onClick={() => {props.setRangeSetting(RangeSetting.SixMonth)}}>6m</button>
+        <button onClick={() => {props.setRangeSetting(RangeSetting.YTD)}}>YTD</button>
+        <button onClick={() => {props.setRangeSetting(RangeSetting.OneYear)}}>1y</button>
+        <button onClick={() => {props.setRangeSetting(RangeSetting.TwoYear)}}>2y</button>
+        <button onClick={() => {props.setRangeSetting(RangeSetting.FiveYear)}}>5y</button>
       </section>
       <section className="flex" onClick={handleCustomClick}>
         <p>Custom:</p>
