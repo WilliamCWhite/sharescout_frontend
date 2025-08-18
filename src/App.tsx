@@ -13,10 +13,13 @@ function App() {
 
   const [rangeSetting, setRangeSetting] = useState<RangeSetting>(RangeSetting.OneMonth)
   const [activeRange, setActiveRange] = useState<DateRange>(generateSetRange(RangeSetting.OneMonth))
+
+  const [seriesTickerLists, setSeriesTickerLists] = useState<string[][]>([[],[],[],[]])
   
   useEffect(() => {
+    // generate New Response Points
 
-  })
+  }, [seriesTickerLists, activeRange])
 
   useEffect(() => {
     const fetchDataFunc = async () => {
@@ -38,7 +41,7 @@ function App() {
           field={DataDisplaySetting.PercentGrowth}
           field2={DataDisplaySetting.PercentReturns}
         />
-        <StockLibrary rangeSetting={rangeSetting} activeRange={activeRange} />
+        <StockLibrary rangeSetting={rangeSetting} activeRange={activeRange} seriesTickerLists={seriesTickerLists} setSeriesTickerLists={setSeriesTickerLists}/>
       </main>
     </div>
   );

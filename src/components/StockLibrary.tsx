@@ -1,26 +1,29 @@
 import SearchBar from "./SearchBar";
 import { addStockData, getStockData, updateStockData, type StockData } from "../lib/db";
 import { useEffect, useState } from "react";
-import Ticker from "./Ticker";
+import LibraryTicker from "./LibraryTicker";
 import { RangeSetting, type DateRange } from "../lib/interfaces";
 import { getResponsePoints } from "../lib/apiRequests";
 import { makeStockDataPartial } from "../lib/rangeToStockData";
 import { customRangeToStringKey } from "../lib/generateRanges";
-import { DndContext } from "@dnd-kit/core";
+import { DndContext, type DragEndEvent } from "@dnd-kit/core";
 import SeriesBox from "./SeriesBox";
+import { addTickerByDragEvent, removeSeriesListTicker } from "../lib/seriesTickerListHandling";
 
 interface StockLibraryProps {
   rangeSetting: RangeSetting 
   activeRange: DateRange
+  seriesTickerLists: string[][]
+  setSeriesTickerLists: any
 }
 
 function StockLibrary(props: StockLibraryProps) {
-  const [tickers, setTickers] = useState<string[]>([])
+  const [libTickers, setLibTickers] = useState<string[]>([])
 
   useEffect(() => {
     console.log("entered useEffect, tickers =")
-    console.log(tickers)
-    for (const ticker of tickers) {
+    console.log(libTickers)
+    for (const ticker of libTickers) {
       console.log(`from useEffect, about to process ticker ${ticker}`)
       console.log(ticker)
       processTicker(ticker, props.rangeSetting, props.activeRange)
@@ -29,12 +32,12 @@ function StockLibrary(props: StockLibraryProps) {
 
   async function addTicker(ticker: string) {
     try {
-      console.log(`Adding ticker ${ticker}, currenlty tickers = ${tickers}`)
-      if (tickers.includes(ticker)) {
+      console.log(`Adding ticker ${ticker}, currenlty tickers = ${libTickers}`)
+      if (libTickers.includes(ticker)) {
         console.log("oh tickers already had that")
         return
       }
-      setTickers([...tickers, ticker])
+      setLibTickers([...libTickers, ticker])
       await addStockData({
         ticker: ticker
       }) 
@@ -76,9 +79,23 @@ function StockLibrary(props: StockLibraryProps) {
     }
   }
 
-  const tickerComponents = tickers.map((ticker: string, index: number) => {
+  const tickerComponents = libTickers.map((ticker: string, index: number) => {
     return (
-      <Ticker key={index} ticker={ticker} />
+      <LibraryTicker key={index} ticker={ticker} />
+    )
+  })
+
+  function handleDragEnd(event: DragEndEvent) {
+    props.setSeriesTickerLists(addTickerByDragEvent(props.seriesTickerLists, event))
+  }
+
+  function removeTickerFromList(index: number, ticker: string) {
+    props.setSeriesTickerLists(removeSeriesListTicker(props.seriesTickerLists, index, ticker))
+  }
+  
+  const seriesBoxes = props.seriesTickerLists.map((list: string[], index: number) => {
+    return (
+      <SeriesBox key={index} seriesIndex={index} seriesTickerList={list} removeTickerFromList={removeTickerFromList}/>
     )
   })
 
@@ -86,12 +103,12 @@ function StockLibrary(props: StockLibraryProps) {
     <section className="w-full flex flex-col bg-blue-100">
       <p>Hello</p>
       <SearchBar addTicker={addTicker}/>
-      <DndContext>
+      <DndContext onDragEnd={handleDragEnd}>
         <section className="w-full flex min-h-10">
           {tickerComponents}
         </section>
         <section>
-          <SeriesBox />
+          {seriesBoxes}
         </section>
       </DndContext>
     </section>
