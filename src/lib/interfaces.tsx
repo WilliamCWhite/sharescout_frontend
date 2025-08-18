@@ -25,15 +25,15 @@ export type DataDisplaySetting =
   (typeof DataDisplaySetting)[keyof typeof DataDisplaySetting];
 
 export const RangeSetting = {
-  OneDay: "1d",
-  FiveDay: "5d",
-  OneMonth: "1m",
-  ThreeMonth: "3m",
-  SixMonth: "6m",
-  YTD: "YTD",
-  OneYear: "1y",
-  TwoYear: "2y",
-  FiveYear: "5y",
+  OneDay: "oneDay",
+  FiveDay: "fiveDay",
+  OneMonth: "oneMonth",
+  ThreeMonth: "threeMonth",
+  SixMonth: "sixMonth",
+  YTD: "ytd",
+  OneYear: "oneYear",
+  TwoYear: "twoYear",
+  FiveYear: "fiveYear",
   Custom: "custom"
 } as const;
 

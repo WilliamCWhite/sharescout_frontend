@@ -6,7 +6,11 @@ import SearchResult from "./SearchResult";
 
 const requestWaitMs = 500
 
-function SearchBar() {
+interface SearchBarProps {
+  addTicker: (ticker: string) => Promise<void>
+}
+
+function SearchBar(props: SearchBarProps) {
   const [currentText, setCurrentText] = useState<string>("")
   const [searchResults, setSearchResults] = useState<SearchQuote[]>([])
   const [showSearch, setShowSearch] = useState<boolean>(false)
@@ -29,13 +33,17 @@ function SearchBar() {
     setShowSearch(true)
   }
 
+  // Must delay deselect to give browser time to handle click on conditionally rendered SearchResults
   function handleBlur() {
+    // setTimeout(() => {
+    //   setShowSearch(false)
+    // }, 200)
     setShowSearch(false)
   }
 
   const searchResultComponents = searchResults.map((result: SearchQuote, index: number) => {
     return (
-      <SearchResult key={index} quote={result}/>
+      <SearchResult key={index} quote={result} addTicker={props.addTicker}/>
     )
   })
 

@@ -1,18 +1,18 @@
 import { Dexie, type EntityTable } from 'dexie';
-import type { ResponsePoint } from './interfaces';
+import { RangeSetting, type ResponsePoint } from './interfaces';
 
 export interface StockData {
   ticker: string;
-  oneDay: ResponsePoint[];
-  fiveDay: ResponsePoint[];
-  oneMonth: ResponsePoint[];
-  threeMonth: ResponsePoint[];
-  sixMonth: ResponsePoint[];
-  ytd: ResponsePoint[];
-  oneYear: ResponsePoint[];
-  twoYear: ResponsePoint[];
-  fiveYear: ResponsePoint[];
-  custom: ResponsePoint[];
+  [RangeSetting.OneDay]: ResponsePoint[];
+  [RangeSetting.FiveDay]: ResponsePoint[];
+  [RangeSetting.OneMonth]: ResponsePoint[];
+  [RangeSetting.ThreeMonth]: ResponsePoint[];
+  [RangeSetting.SixMonth]: ResponsePoint[];
+  [RangeSetting.YTD]: ResponsePoint[];
+  [RangeSetting.OneYear]: ResponsePoint[];
+  [RangeSetting.TwoYear]: ResponsePoint[];
+  [RangeSetting.FiveYear]: ResponsePoint[];
+  [RangeSetting.Custom]: ResponsePoint[];
   customRange: string;
 }
 
@@ -22,6 +22,11 @@ export const db = new Dexie('FriendDatabase') as Dexie & {
 
 db.version(1).stores({
   stocks: 'ticker, oneDay, fiveDay, oneMonth, threeMonth, sixMonth, ytd, oneYear, twoYear, fiveYear, custom, customRange',
+});
+
+// wipes stock table at start of every reload
+db.on('ready', async () => {
+  await db.stocks.clear(); 
 });
 
 export async function addStockData(stockData: Partial<StockData>) {
@@ -39,4 +44,18 @@ export async function addStockData(stockData: Partial<StockData>) {
     customRange: "",
     ...stockData
   })
+}
+
+export async function updateStockData(ticker: string, stockDataPartial: Partial<StockData>) {
+  return db.stocks.update(ticker, stockDataPartial)
+}
+
+export async function getStockData(ticker: string): Promise<StockData | undefined> {
+  try {
+    const result = await db.stocks.get(ticker)
+    return result
+  }
+  catch (error) {
+    console.error(error)
+  }
 }

@@ -38,7 +38,7 @@ function App() {
           field={DataDisplaySetting.PercentGrowth}
           field2={DataDisplaySetting.PercentReturns}
         />
-        <StockLibrary />
+        <StockLibrary rangeSetting={rangeSetting} activeRange={activeRange} />
       </main>
     </div>
   );

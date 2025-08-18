@@ -110,3 +110,9 @@ export function isEndValid(startString: string, endString: string): boolean {
 
   return true
 }
+
+export function customRangeToStringKey(dateRange: DateRange): string {
+  const startString = `${dateRange.startDate.getUTCFullYear()}-${dateRange.startDate.getUTCMonth() + 1}-${dateRange.startDate.getUTCDate()}`
+  const endString = `${dateRange.endDate.getUTCFullYear()}-${dateRange.endDate.getUTCMonth() + 1}-${dateRange.endDate.getUTCDate()}`
+  return `${startString}_${endString}`
+}
