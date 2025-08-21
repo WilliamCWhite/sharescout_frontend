@@ -7,6 +7,8 @@ import Header from "./components/Header";
 import DateSelector from "./components/DateSelector";
 import StockLibrary from "./components/StockLibrary";
 import { generateSetRange } from "./lib/generateRanges";
+import { useLiveQuery } from "dexie-react-hooks";
+import { getTickerRangeValues } from "./lib/db";
 
 function App() {
   const [responsePoints, setResponsePoints] = useState<ResponsePoint[][]>([]);
@@ -28,6 +30,24 @@ function App() {
     };
     fetchDataFunc();
   }, [activeRange]);
+
+  const chart1Data = useLiveQuery(async () => {
+    let result: ResponsePoint[][] = []
+    for (const ticker of seriesTickerLists[0]) {
+      const tickerResult = await getTickerRangeValues(ticker, rangeSetting)
+      console.log(tickerResult)
+      if (!tickerResult) {
+        console.log("There was no ticker result")
+        continue
+      }
+      result.push(tickerResult)
+    }
+    return result
+  }, [seriesTickerLists[0], activeRange])
+
+  console.log("chart1Data:")
+  console.log(chart1Data)
+
 
 
 

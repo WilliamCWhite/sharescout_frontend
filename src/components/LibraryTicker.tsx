@@ -1,5 +1,5 @@
-import { getStockData } from "../lib/db"
 import { useDraggable } from "@dnd-kit/core"
+import { getTickerDataFromDB } from "../lib/db"
 
 
 interface TickerProps {
@@ -16,7 +16,8 @@ function LibraryTicker(props: TickerProps) {
   } : undefined
 
   async function handleClick() {
-    const result = await getStockData(props.ticker)
+    if (true) return
+    const result = await getTickerDataFromDB(props.ticker)
     console.log(result)
   }
 

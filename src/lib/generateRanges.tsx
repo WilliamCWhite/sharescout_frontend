@@ -10,8 +10,8 @@ export function generateSetRange(rangeSetting: RangeSetting): DateRange {
   }
 
   const start = new Date(end.getTime())
-  end.setDate(end.getDate() + 1)
   end.setUTCHours(0, 0, 0, 0)
+  start.setDate(end.getDate() - 1)
   start.setUTCHours(0, 0, 0, 0)
 
   switch (rangeSetting) {

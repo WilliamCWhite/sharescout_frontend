@@ -2,6 +2,7 @@ import type { DateRange, ResponsePoint, SearchQuote } from "./interfaces"
 
 export async function getResponsePoints(ticker: string, dateRange: DateRange): Promise<ResponsePoint[]> {
   try {
+    console.log(dateRange)
     const response = await fetch(`http://localhost:6060/api/stock/${encodeURIComponent(ticker)}`, {
       method: "POST",
       body: JSON.stringify({

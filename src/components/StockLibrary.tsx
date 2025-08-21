@@ -1,14 +1,11 @@
 import SearchBar from "./SearchBar";
-import { addStockData, getStockData, updateStockData, type StockData } from "../lib/db";
 import { useEffect, useState } from "react";
 import LibraryTicker from "./LibraryTicker";
 import { RangeSetting, type DateRange } from "../lib/interfaces";
-import { getResponsePoints } from "../lib/apiRequests";
-import { makeStockDataPartial } from "../lib/rangeToStockData";
-import { customRangeToStringKey } from "../lib/generateRanges";
 import { DndContext, type DragEndEvent } from "@dnd-kit/core";
 import SeriesBox from "./SeriesBox";
 import { addTickerByDragEvent, removeSeriesListTicker } from "../lib/seriesTickerListHandling";
+import { updateDBIfEmpty } from "../lib/db";
 
 interface StockLibraryProps {
   rangeSetting: RangeSetting 
@@ -26,7 +23,7 @@ function StockLibrary(props: StockLibraryProps) {
     for (const ticker of libTickers) {
       console.log(`from useEffect, about to process ticker ${ticker}`)
       console.log(ticker)
-      processTicker(ticker, props.rangeSetting, props.activeRange)
+      updateDBIfEmpty(ticker, props.rangeSetting, props.activeRange)
     }
   }, [props.activeRange]) 
 
@@ -38,41 +35,7 @@ function StockLibrary(props: StockLibraryProps) {
         return
       }
       setLibTickers([...libTickers, ticker])
-      await addStockData({
-        ticker: ticker
-      }) 
-      await processTicker(ticker, props.rangeSetting, props.activeRange)
-    }
-    catch (error) {
-      console.error(error)
-    }
-  }
-
-  async function processTicker(ticker: string, rangeSetting: RangeSetting, activeRange: DateRange) {
-    try {
-      // TODO: make a get method that only retrieves current rangeSetting cuz this process od data
-      const result = await getStockData(ticker)
-      if (result === undefined) {
-        throw new Error("stock not in tickers")
-      }
-      if (rangeSetting !== RangeSetting.Custom && result[rangeSetting].length > 0) {
-        console.log(`data for ticker ${ticker} with current range setting already exists`)
-        return
-      }
-      if (rangeSetting === RangeSetting.Custom && customRangeToStringKey(activeRange) === result.customRange) {
-        console.log(`data for ticker ${ticker} with current custom range setting already exists`)
-        return
-      }
-
-      console.log("attempting to update data in db")
-      const data = await getResponsePoints(ticker, activeRange)
-      console.log("data received from backend:")
-      console.log(data)
-      const stockDataPartial: Partial<StockData> = makeStockDataPartial(ticker, rangeSetting, activeRange, data)
-      const update = await updateStockData(ticker, stockDataPartial)
-      if (update === 0) {
-        console.log("failed to update data")
-      }
+      await updateDBIfEmpty(ticker, props.rangeSetting, props.activeRange)
     }
     catch (error) {
       console.error(error)
