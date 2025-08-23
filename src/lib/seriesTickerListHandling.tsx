@@ -1,8 +1,11 @@
 import type { DragEndEvent } from "@dnd-kit/core";
+import type { SeriesTicker } from "./interfaces";
 
-export function addTickerByDragEvent(tickerLists: string[][], event: DragEndEvent): string[][] {
+const DEFAULT_INVESTMENT = 100
 
-  const deepCopy: string[][] = tickerLists.map(inner => [...inner])
+export function addTickerByDragEvent(tickerLists: SeriesTicker[][], event: DragEndEvent): SeriesTicker[][] {
+
+  const deepCopy: SeriesTicker[][] = tickerLists.map(inner => [...inner])
 
   if (!event.over || !event.active) {
     return deepCopy
@@ -15,31 +18,67 @@ export function addTickerByDragEvent(tickerLists: string[][], event: DragEndEven
   }
   const tickerToAdd = event.active.id.toString()
 
-  if (deepCopy[index].includes(tickerToAdd)) {
-    return deepCopy
+  for (const copiedTicker of deepCopy[index]) {
+    if (copiedTicker.ticker === tickerToAdd) {
+      return deepCopy
+    }
+  }
+  
+  const seriesToAdd: SeriesTicker = {
+    ticker: tickerToAdd,
+    investment: DEFAULT_INVESTMENT
   }
 
-  deepCopy[index].push(tickerToAdd)
+  deepCopy[index].push(seriesToAdd)
   return deepCopy
 }
 
-export function removeSeriesListTicker(tickerLists: string[][], index: number, ticker: string): string[][] {
-  const deepCopy: string[][] = tickerLists.map(inner => [...inner])
+export function removeSeriesListTicker(tickerLists: SeriesTicker[][], seriesIndex: number, ticker: string): SeriesTicker[][] {
+  const deepCopy: SeriesTicker[][] = tickerLists.map(inner => [...inner])
 
-  if (index >= deepCopy.length) {
+  if (seriesIndex >= deepCopy.length) {
     console.log("index out of bounds")
     return deepCopy
   }
 
-  if (!deepCopy[index].includes(ticker)) {
+  if (indexOfTicker(deepCopy, seriesIndex, ticker) === -1) {
     console.log("does not include ticker")
+    return deepCopy
   }
   
-  const indexToRemove = deepCopy[index].indexOf(ticker)
+  const indexToRemove = indexOfTicker(deepCopy, seriesIndex, ticker)
 
-  console.log(deepCopy[index])
-  deepCopy[index].splice(indexToRemove, 1)
-  console.log(deepCopy[index])
+  console.log(deepCopy[seriesIndex])
+  deepCopy[seriesIndex].splice(indexToRemove, 1)
+  console.log(deepCopy[seriesIndex])
 
   return deepCopy
+}
+
+export function generateUpdatedTickerInvestment(tickerLists: SeriesTicker[][], seriesIndex: number, ticker: string, newInvestment: number): SeriesTicker[][] {
+  const deepCopy: SeriesTicker[][] = tickerLists.map(inner => [...inner])
+
+  if (seriesIndex >= deepCopy.length) {
+    console.log("index out of bounds")
+    return deepCopy
+  }
+
+  if (indexOfTicker(deepCopy, seriesIndex, ticker) === -1) {
+    console.log("does not include ticker")
+    return deepCopy
+  }
+
+  const indexToUpdate = indexOfTicker(deepCopy, seriesIndex, ticker)
+  deepCopy[seriesIndex][indexToUpdate].investment = newInvestment
+  return deepCopy
+}
+
+// TODO: Write index of function (basic code is in addTicker method already)
+function indexOfTicker(deepCopy: SeriesTicker[][], seriesIndex: number,  ticker: string): number {
+  for (let i = 0; i < deepCopy[seriesIndex].length; i++) {
+    if (deepCopy[seriesIndex][i].ticker === ticker) {
+      return i
+    }
+  }
+  return -1
 }

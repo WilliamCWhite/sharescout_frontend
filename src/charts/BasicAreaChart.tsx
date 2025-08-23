@@ -1,14 +1,9 @@
 import { useEffect, useRef } from "react";
 import { createChart, AreaSeries } from "lightweight-charts";
 import type { AreaData, Time  } from "lightweight-charts";
-import { convertResponsePoints } from "../lib/dataConversions";
-import type { ResponsePoint } from "../lib/interfaces";
-import { DataDisplaySetting } from "../lib/interfaces";
 
 interface BasicAreaChartProps {
-  responsePoints: ResponsePoint[] | null;
-  field: DataDisplaySetting;
-  field2: DataDisplaySetting;
+  chartPoints: AreaData<Time>[] | null
 }
 
 function BasicAreaChart(props: BasicAreaChartProps) {
@@ -16,8 +11,8 @@ function BasicAreaChart(props: BasicAreaChartProps) {
 
   useEffect(() => {
     if (!chartContainerRef.current) return;
-    if (props.responsePoints === null) return;
-    if (props.responsePoints.length <= 0)  return;
+    if (props.chartPoints === null) return;
+    if (props.chartPoints.length <= 0)  return;
 
     const chart = createChart(chartContainerRef.current, {
       layout: {
@@ -33,18 +28,14 @@ function BasicAreaChart(props: BasicAreaChartProps) {
 
     const newSeries = chart.addSeries(AreaSeries, {});
 
-    const seriesData: AreaData<Time>[] = convertResponsePoints(props.responsePoints, props.field)
+    const seriesData: AreaData<Time>[] = props.chartPoints
 
     newSeries.setData(seriesData);
-    
-    const nextSeries = chart.addSeries(AreaSeries, {});
-    const nextData = convertResponsePoints(props.responsePoints, props.field2)
-    nextSeries.setData(nextData)
 
     return () => {
       chart.remove();
     };
-  }, [props.responsePoints]);
+  }, [props.chartPoints]);
 
   return <div ref={chartContainerRef} />;
 }

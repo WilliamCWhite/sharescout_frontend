@@ -51,3 +51,8 @@ export interface SearchQuote {
   typeDisp: string,
   sectorDisp: string
 }
+
+export interface SeriesTicker {
+  ticker: string,
+  investment: number
+}

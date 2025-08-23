@@ -1,10 +1,12 @@
 import { useDroppable } from "@dnd-kit/core";
-import SeriesTicker from "./SeriesTicker";
+import type { SeriesTicker } from "../lib/interfaces";
+import SeriesBoxTicker from "./SeriesBoxTicker";
 
 interface SeriesBoxProps {
   seriesIndex: number;
-  seriesTickerList: string[];
+  seriesTickerList: SeriesTicker[];
   removeTickerFromList: (index: number, ticker: string) => void;
+  updateSeriesTickerInvestment: (index: number, ticker: string, newInvestment: number) => void;
 }
 
 function SeriesBox(props: SeriesBoxProps) {
@@ -16,15 +18,20 @@ function SeriesBox(props: SeriesBoxProps) {
     backgroundColor: isOver ? "green" : undefined,
   };
 
+  function updateSelfInvestment(ticker: string, newInvestment: number) {
+    props.updateSeriesTickerInvestment(props.seriesIndex, ticker, newInvestment)
+  }
+
   const seriesTickerComponents = props.seriesTickerList.map(
-    (ticker: string) => {
+    (seriesTicker: SeriesTicker) => {
       return (
-        <SeriesTicker
-          key={ticker}
-          ticker={ticker}
+        <SeriesBoxTicker
+          key={seriesTicker.ticker}
+          seriesTicker={seriesTicker}
           deleteSelf={() => {
-            props.removeTickerFromList(props.seriesIndex, ticker);
+            props.removeTickerFromList(props.seriesIndex, seriesTicker.ticker);
           }}
+          updateSelfInvestment={updateSelfInvestment}
         />
       );
     },

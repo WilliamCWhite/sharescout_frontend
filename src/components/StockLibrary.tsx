@@ -1,16 +1,16 @@
 import SearchBar from "./SearchBar";
 import { useEffect, useState } from "react";
 import LibraryTicker from "./LibraryTicker";
-import { RangeSetting, type DateRange } from "../lib/interfaces";
+import { RangeSetting, type DateRange, type SeriesTicker } from "../lib/interfaces";
 import { DndContext, type DragEndEvent } from "@dnd-kit/core";
 import SeriesBox from "./SeriesBox";
-import { addTickerByDragEvent, removeSeriesListTicker } from "../lib/seriesTickerListHandling";
+import { addTickerByDragEvent, generateUpdatedTickerInvestment, removeSeriesListTicker } from "../lib/seriesTickerListHandling";
 import { updateDBIfEmpty } from "../lib/db";
 
 interface StockLibraryProps {
   rangeSetting: RangeSetting 
   activeRange: DateRange
-  seriesTickerLists: string[][]
+  seriesTickerLists: SeriesTicker[][]
   setSeriesTickerLists: any
 }
 
@@ -55,10 +55,14 @@ function StockLibrary(props: StockLibraryProps) {
   function removeTickerFromList(index: number, ticker: string) {
     props.setSeriesTickerLists(removeSeriesListTicker(props.seriesTickerLists, index, ticker))
   }
+
+  function updateSeriesTickerInvestment(index: number, ticker: string, newInvestment: number) {
+    props.setSeriesTickerLists(generateUpdatedTickerInvestment(props.seriesTickerLists, index, ticker, newInvestment))
+  }
   
-  const seriesBoxes = props.seriesTickerLists.map((list: string[], index: number) => {
+  const seriesBoxes = props.seriesTickerLists.map((list: SeriesTicker[], index: number) => {
     return (
-      <SeriesBox key={index} seriesIndex={index} seriesTickerList={list} removeTickerFromList={removeTickerFromList}/>
+      <SeriesBox key={index} seriesIndex={index} seriesTickerList={list} removeTickerFromList={removeTickerFromList} updateSeriesTickerInvestment={updateSeriesTickerInvestment}/>
     )
   })
 
