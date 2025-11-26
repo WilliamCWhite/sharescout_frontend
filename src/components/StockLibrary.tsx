@@ -74,7 +74,7 @@ function StockLibrary(props: StockLibraryProps) {
         <section className="w-full flex min-h-10">
           {tickerComponents}
         </section>
-        <section>
+        <section className="flex">
           {seriesBoxes}
         </section>
       </DndContext>

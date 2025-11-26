@@ -14,15 +14,18 @@ export interface ResponsePoint {
   percentReturns: number
 }
 
-export const DataDisplaySetting = {
-  Price: "Price",
-  PercentGrowth: "PercentGrowth",
-  ThousandIn: "ThousandIn",
-  PercentReturns: "PercentReturns",
+export const SeriesDisplaySetting = {
+  Balance: "balance",
+  PriceBalance: "priceBalance",
+  Returns: "returns",
+  PriceReturns: "priceReturns",
+  Growth: "growth",
+  PriceGrowth: "priceGrowth",
+  CombinedPrice: "combinedPrice",
 } as const;
 
-export type DataDisplaySetting =
-  (typeof DataDisplaySetting)[keyof typeof DataDisplaySetting];
+export type SeriesDisplaySetting =
+  (typeof SeriesDisplaySetting)[keyof typeof SeriesDisplaySetting];
 
 export const RangeSetting = {
   OneDay: "oneDay",
@@ -56,3 +59,7 @@ export interface SeriesTicker {
   ticker: string,
   investment: number
 }
+
+export type ChartData = Record<string, ResponsePoint[]>
+
+export type SeriesTickerMap = Record<string, number>

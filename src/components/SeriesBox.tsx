@@ -38,7 +38,7 @@ function SeriesBox(props: SeriesBoxProps) {
   );
 
   return (
-    <div ref={setNodeRef} className={`bg-red-300 w-40 h-40`} style={style}>
+    <div ref={setNodeRef} className="bg-red-300 w-1/4 h-full" style={style}>
       Hello
       {seriesTickerComponents}
     </div>

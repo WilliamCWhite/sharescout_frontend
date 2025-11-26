@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { ResponsePoint, SeriesTicker } from "./lib/interfaces";
+import type { SeriesTicker } from "./lib/interfaces";
 import { RangeSetting, type DateRange } from "./lib/interfaces";
 import BasicAreaChart from "./charts/BasicAreaChart";
 import Header from "./components/Header";
@@ -7,8 +7,8 @@ import DateSelector from "./components/DateSelector";
 import StockLibrary from "./components/StockLibrary";
 import { generateSetRange } from "./lib/generateRanges";
 import { useLiveQuery } from "dexie-react-hooks";
-import { getTickerRangeValues } from "./lib/db";
-import type { AreaData, Time, UTCTimestamp } from "lightweight-charts";
+import type { AreaData, Time } from "lightweight-charts";
+import { chartDataToAreaPoints, retrieveChartData } from "./lib/chartDataHandling";
 
 function App() {
   // const [responsePoints, setResponsePoints] = useState<ResponsePoint[][]>([]);
@@ -20,63 +20,22 @@ function App() {
   const [seriesTickerLists, setSeriesTickerLists] = useState<SeriesTicker[][]>([[],[],[],[]])
 
   const chart1Data = useLiveQuery(async () => {
-    let result: ResponsePoint[][] = []
-    for (const seriesTicker of seriesTickerLists[0]) {
-      const tickerResult = await getTickerRangeValues(seriesTicker.ticker, rangeSetting)
-      console.log(tickerResult)
-      if (!tickerResult) {
-        console.log("There was no ticker result")
-        continue
-      }
-      result.push(tickerResult)
-    }
-    return result
+    return await retrieveChartData(seriesTickerLists[0], rangeSetting)
   }, [seriesTickerLists[0], activeRange])
 
   console.log("chart1Data:")
   console.log(chart1Data)
 
   useEffect(() => {
-    let tempChart1Points: AreaData<Time>[] = []
-    if (!chart1Data) return
-
-    let maxLength = 0
-    let maxIndex = -1
-    for (let i = 0; i < chart1Data.length; i++) {
-      if (!chart1Data[i]) continue
-
-      if (chart1Data[i].length > maxLength) {
-        maxLength = chart1Data[i].length
-        maxIndex = i
-      }
+    if (!chart1Data) {
+      return
     }
-
-    for (let i = 0; i < maxLength; i++) {
-      const timestamp = chart1Data[maxIndex][i].timestamp
-      let value = 0
-      
-      for (let j = 0; j < chart1Data.length; j++) {
-        // if this array doesn't include most recent points
-        if (i >= chart1Data[j].length) {
-          const lastIndex = chart1Data[j].length - 1
-          value += chart1Data[j][lastIndex].price
-        }
-        else {
-          value += chart1Data[j][i].price
-        }
-      }
-
-      tempChart1Points.push({
-        time: timestamp as UTCTimestamp,
-        value: value
-      })
-
-      setChart1Points(tempChart1Points)
+    const tempPoints = chartDataToAreaPoints(chart1Data, seriesTickerLists[0])
+    if (!tempPoints) {
+      return
     }
+    setChart1Points(tempPoints)
   }, [chart1Data])
-
-
-
 
   return (
     <div className="w-full h-dvh flex-center flex-col">

@@ -1,5 +1,5 @@
 import type { DragEndEvent } from "@dnd-kit/core";
-import type { SeriesTicker } from "./interfaces";
+import type { SeriesTicker, SeriesTickerMap } from "./interfaces";
 
 const DEFAULT_INVESTMENT = 100
 
@@ -81,4 +81,12 @@ function indexOfTicker(deepCopy: SeriesTicker[][], seriesIndex: number,  ticker:
     }
   }
   return -1
+}
+
+export function makeMapFromTickerList(tickerList: SeriesTicker[]): SeriesTickerMap {
+  const result: SeriesTickerMap = {}
+  for (const seriesTicker of tickerList) {
+    result[seriesTicker.ticker] = seriesTicker.investment
+  }
+  return result
 }
